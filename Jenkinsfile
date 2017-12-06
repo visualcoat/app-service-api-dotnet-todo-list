@@ -27,7 +27,7 @@ node {
       '''
         sh '''
 az group create --name "SL-DEV-ToDoList" --location "WestUS"
-az group deployment create --resource-group "SL-DEV-ToDoList" --template-uri "https://raw.githubusercontent.com/visualcoat/app-service-api-dotnet-todo-list/master/azuredeploy.json" --parameters sitename="aps-dev-todo-list" hostingPlanName="free" siteLocation="West US" 
+az group deployment create --resource-group "SL-DEV-ToDoList" --template-uri "https://raw.githubusercontent.com/visualcoat/app-service-api-dotnet-todo-list/master/azuredeploy.json" --parameters siteName="aps-dev-todo-list" hostingPlanName="free" siteLocation="West US" 
             '''
     }
     // get publish settings
