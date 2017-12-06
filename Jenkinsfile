@@ -26,40 +26,8 @@ node {
         az account set -s $AZURE_SUBSCRIPTION_ID
       '''
         sh '''
-              StrEnvironment="test"              
-              StrPrefixCode="aps"
-              StrResourceGroupJenkins=$StrPrefixCode"-"${service_name}"-Service-Jenkins"
-              StrResourceGroupSolution=$StrPrefixCode"-"${service_name}"-Service-"$StrEnvironment
-              StrLocation="WestUS"
-              StrStorageAccount=$StrPrefixCode"jenkinsstorage"
-              StrContainerName=$StrPrefixCode"armtemplates"
-              StrLocalArm="${WORKSPACE}/infrastructure/api"
-              StrLocalZip="${WORKSPACE}/api/dist"
-              StrFileName="azuredeploy.json"
-              StrFileZip=""${service_name}"Service.zip"
-       
-              az group create --name $StrResourceGroupJenkins --location $StrLocation
-              az storage account create --resource-group $StrResourceGroupJenkins --location $StrLocation --sku Standard_LRS --kind Storage --name $StrStorageAccount
-              
-              connection=$(az storage account show-connection-string --resource-group $StrResourceGroupJenkins --name $StrStorageAccount --query connectionString)
-              urlblob=$(az storage account show -g $StrResourceGroupJenkins -n $StrStorageAccount --query primaryEndpoints --output tsv |head -n 2|awk '{print $1}')
-              accesskey1=$(az storage account keys list --account-name $StrStorageAccount --resource-group $StrResourceGroupJenkins --output tsv|head -n 1|awk '{print $3}')
-              
-              az storage container create --name $StrContainerName --public-access off --connection-string $connection
-              azcopy --source $StrLocalArm --destination $urlblob$StrContainerName --dest-key $accesskey1 --recursive --quiet
-              azcopy --source $StrLocalZip --destination $urlblob$StrContainerName --dest-key $accesskey1 --recursive --quiet
-                
-                echo "Running Azure Delegator Build"
-                expiretime=$(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
-                token=$(az storage blob generate-sas --container-name $StrContainerName --name $StrFileName --expiry $expiretime --permissions r --output tsv --connection-string $connection)
-                tokenZip=$(az storage blob generate-sas --container-name $StrContainerName --name $StrFileZip --expiry $expiretime --permissions r --output tsv --connection-string $connection)
-                urlFile=$(az storage blob url --container-name $StrContainerName --name $StrFileName --output tsv --connection-string $connection)
-                urlZip=$(az storage blob url --container-name $StrContainerName --name $StrFileZip --output tsv --connection-string $connection)
-                ServicePrincipalAppId=$(az keyvault secret show --name "keyVaultServicePrincipalAppId" --vault-name "ICDelegatorJenkinsKeys" --output tsv|head -n 1|awk '{print $6}')
-                ServicePrincipalSecret=$(az keyvault secret show --name "keyVaultServicePrincipalSecret" --vault-name "ICDelegatorJenkinsKeys" --output tsv|head -n 1|awk '{print $6}')
-                TemplateStorageAccountAccessKey=$(az keyvault secret show --name "azTmplStorageAccountAccessKey" --vault-name "ICDelegatorJenkinsKeys" --output tsv|head -n 1|awk '{print $6}')
-                az group create --name $StrResourceGroupSolution --location $StrLocation
-                az group deployment create --resource-group $StrResourceGroupSolution --template-uri "https://raw.githubusercontent.com/visualcoat/app-service-api-dotnet-todo-list/master/azuredeploy.json" --parameters parm_msdeploy_packageurl="$urlZip?$tokenZip" parm_build_environment=$StrEnvironment parm_build_prefixcode=$StrPrefixCode parm_keyVaultServicePrincipalAppId=$ServicePrincipalAppId parm_keyVaultServicePrincipalSecret=$ServicePrincipalSecret parm_azTmplStorageAccountAccessKey=$TemplateStorageAccountAccessKey
+az group create --name "SL-DEV-ToDoList" --location "WestUS"
+az group deployment create --resource-group "SL-DEV-ToDoList" --template-uri "https://raw.githubusercontent.com/visualcoat/app-service-api-dotnet-todo-list/master/azuredeploy.json" --parameters sitename="aps-dev-todo-list" hostingPlanName="free" siteLocation="West US" 
             '''
     }
     // get publish settings
