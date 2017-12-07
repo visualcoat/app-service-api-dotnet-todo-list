@@ -17,18 +17,23 @@ node {
   }
   
   stage('deploy') {
-    def resourceGroup = 'APS-DEV-ResGroup' 
-    def webAppName = 'APSDevApp'
+    //def resourceGroup = 'APS-DEV-ResGroup' 
+    //def webAppName = 'APSDevApp'
     // login Azure
     withCredentials([azureServicePrincipal('sp-jenkins')]) {
       sh '''
         az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
         az account set -s $AZURE_SUBSCRIPTION_ID
       '''
-        sh '''
-az group create --name "SL-DEV-ToDoList" --location "WestUS"
-az group deployment create --resource-group "SL-DEV-ToDoList" --template-uri "https://raw.githubusercontent.com/visualcoat/app-service-api-dotnet-todo-list/master/azuredeploy.json" --parameters siteName="aps-dev-todo-list-site" hostingPlanName="aps-dev-todo-list-hostplan" siteLocation="West US" 
-            '''
+      sh '''
+              StrEnvironment="test"              
+              StrPrefixCode=sl"
+              StrResourceGroupJenkins=$StrPrefixCode"-"${service_name}"-Service-Jenkins"
+              StrResourceGroupSolution=$StrPrefixCode"-"${service_name}"-Service-"$StrEnvironment
+              StrLocation="WestUS"
+az group create --name $StrResourceGroupSolution  --location $StrLocation
+az group deployment create --resource-group $StrResourceGroupSolution --template-uri "https://raw.githubusercontent.com/visualcoat/app-service-api-dotnet-todo-list/master/azuredeploy.json" --parameters siteName="app-todo-list-site" hostingPlanName="app-todo-list-hostplan" siteLocation=$StrLocation 
+       '''
     }
     // get publish settings
     //def pubProfilesJson = sh script: "az webapp deployment list-publishing-profiles -g $resourceGroup -n $webAppName", returnStdout: true
