@@ -10,7 +10,7 @@ def getFtpPublishProfile(def publishProfilesJson) {
 node {
   stage('init') {
     checkout scm
-  }
+  }"
   
   stage('build') {
  //   sh 'mvn clean package'
@@ -27,7 +27,7 @@ node {
       '''
       sh '''
               StrEnvironment="test"              
-              StrPrefixCode=sl"
+              StrPrefixCode="sl"
               StrResourceGroupJenkins=$StrPrefixCode"-"${service_name}"-Service-Jenkins"
               StrResourceGroupSolution=$StrPrefixCode"-"${service_name}"-Service-"$StrEnvironment
               StrLocation="WestUS"
