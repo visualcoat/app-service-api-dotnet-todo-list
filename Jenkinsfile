@@ -32,7 +32,7 @@ node {
               StrResourceGroupSolution=$StrPrefixCode"-todolist-Service-"$StrEnvironment
               StrLocation="WestUS"
 az group create --name $StrResourceGroupSolution  --location $StrLocation
-az group deployment create --resource-group $StrResourceGroupSolution --template-uri "https://raw.githubusercontent.com/visualcoat/app-service-api-dotnet-todo-list/master/azuredeploy.json" --parameters siteName="app-todo-list-site" hostingPlanName="app-todo-list-hostplan" siteLocation=$StrLocation 
+az group deployment create --resource-group $StrResourceGroupSolution --template-uri "https://raw.githubusercontent.com/visualcoat/demp-app-todo-list/master/azuredeploy.json" --parameters siteName="app-todo-list-site" hostingPlanName="app-todo-list-hostplan" siteLocation=$StrLocation 
        '''
     }
     // get publish settings
